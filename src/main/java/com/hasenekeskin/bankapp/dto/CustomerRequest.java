@@ -1,29 +1,31 @@
-package com.hasenekeskin.bankapp.model;
+package com.hasenekeskin.bankapp.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+@NoArgsConstructor
+@Builder
+public class CustomerRequest {
+
+    @NotEmpty
+    @Size(min=11,max=11)
     private String tc;
+    @NotEmpty
+    @Size(min=8,max=16)
     private String password;
+    @NotEmpty
     private String name;
+    @NotEmpty
     private String surname;
     private String customerNo;
     private String department;
     private BigDecimal balance;
-    private Date createDate=new Date();
-
 }
