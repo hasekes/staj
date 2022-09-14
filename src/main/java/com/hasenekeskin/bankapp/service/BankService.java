@@ -77,7 +77,8 @@ public class BankService {
 
         return CustomerResponseDTO.builder()
                 .surname(newCustomerObject.getSurname())
-                .name(newCustomerObject.getName()).build();
+                .name(newCustomerObject.getName())
+                .balance(newCustomerObject.getBalance()).build();
     }
 
     public void addBalance(String tc , Balance balance ) {
@@ -85,7 +86,7 @@ public class BankService {
         if(customer.getBalance()==null){
             customer.setBalance(BigDecimal.valueOf(0));
         }
-        customer.setBalance(customer.getBalance().add(balance.getMiktar()));
+        customer.setBalance(customer.getBalance().add(balance.getBalance()));
         bankRepository.save(customer);
 
     }

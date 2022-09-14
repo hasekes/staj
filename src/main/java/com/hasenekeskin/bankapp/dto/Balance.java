@@ -12,5 +12,5 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class Balance {
-    private BigDecimal miktar;
+    private BigDecimal balance;
 }

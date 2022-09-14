@@ -54,8 +54,8 @@ public class BankController {
 
 
     @PutMapping("/{tc}")
-    public ResponseEntity<Void> bakiyeEkle (@PathVariable String tc, @RequestBody Balance bakiye){
-            bankService.addBalance(tc,bakiye);
+    public ResponseEntity<Void> addBalance (@PathVariable String tc, @RequestBody Balance balance){
+            bankService.addBalance(tc,balance);
             return new ResponseEntity<>(HttpStatus.OK);
     }
 
