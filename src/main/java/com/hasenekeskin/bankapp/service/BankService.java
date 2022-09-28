@@ -8,6 +8,7 @@ import com.hasenekeskin.bankapp.exception.CustomerNotFoundException;
 import com.hasenekeskin.bankapp.model.Customer;
 import com.hasenekeskin.bankapp.repository.BankRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,17 +18,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BankService {
     private final BankRepository bankRepository;
+    private final ModelMapper modelMapper ;
 
     public CustomerResponseDTO getCustomer(String tc) {
 
         Customer customer = bankRepository.findByTc(tc).orElseThrow(() -> new CustomerNotFoundException("Customer not found"
         ));
 
-        return CustomerResponseDTO.builder()
-                .name(customer.getName())
-                .surname(customer.getSurname())
-                .balance(customer.getBalance())
-                .build();
+        return modelMapper.map(customer,CustomerResponseDTO.class);
 
     }
 
@@ -37,20 +35,11 @@ public class BankService {
         if (customerByTc.isPresent()) {
             throw new CustomerAlreadyExistsException("Customer already exists");
         }
-        Customer customer = new Customer();
-        customer.setName(newCustomer.getName());
-        customer.setTc(newCustomer.getTc());
-        customer.setPassword(newCustomer.getPassword());
-        customer.setSurname(newCustomer.getSurname());
-        customer.setDepartment(newCustomer.getDepartment());
-        customer.setCustomerNo(newCustomer.getCustomerNo());
-        customer.setBalance(newCustomer.getBalance());
+        Customer customer = modelMapper.map(newCustomer,Customer.class);
+        bankRepository.save(customer);
+        return modelMapper.map(customer,CustomerResponseDTO.class);
 
-        Customer newCustomerObject = bankRepository.save(customer);
 
-        return CustomerResponseDTO.builder()
-                .surname(newCustomerObject.getSurname())
-                .name(newCustomerObject.getName()).balance(newCustomerObject.getBalance()).build();
     }
 
     public void deleteCustomer(String tc) {
@@ -66,19 +55,23 @@ public class BankService {
     public CustomerResponseDTO updateCustomer(CustomerRequest customerRequest) {
         Customer oldCustomer = bankRepository.findByTc(customerRequest.getTc()).orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
 
-        oldCustomer.setName(customerRequest.getName());
+
+
+
         oldCustomer.setTc(customerRequest.getTc());
         oldCustomer.setPassword(customerRequest.getPassword());
+        oldCustomer.setName(customerRequest.getName());
         oldCustomer.setSurname(customerRequest.getSurname());
-        oldCustomer.setDepartment(customerRequest.getDepartment());
         oldCustomer.setCustomerNo(customerRequest.getCustomerNo());
-        Customer newCustomerObject = bankRepository.save(oldCustomer);
+        oldCustomer.setDepartment(customerRequest.getDepartment());
+        oldCustomer.setBalance(customerRequest.getBalance());
+        bankRepository.save(oldCustomer);
 
 
-        return CustomerResponseDTO.builder()
-                .surname(newCustomerObject.getSurname())
-                .name(newCustomerObject.getName())
-                .balance(newCustomerObject.getBalance()).build();
+        return modelMapper.map(oldCustomer,CustomerResponseDTO.class);
+
+
+
     }
 
     public void addBalance(String tc , Balance balance ) {
